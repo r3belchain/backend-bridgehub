@@ -1,0 +1,87 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  VENDOR
+  CUSTOMER
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(CUSTOMER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  spaces       Space[]       @relation("VendorSpaces")
+  reservations Reservation[] @relation("CustomerReservations")
+}
+
+model Space {
+  id           String   @id @default(uuid())
+  vendorId     String
+  name         String
+  description  String
+  address      String
+  pricePerHour Float
+  capacity     Int
+  isApproved   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  vendor       User           @relation("VendorSpaces", fields: [vendorId], references: [id], onDelete: Cascade)
+  amenities    SpaceAmenity[]
+  reservations Reservation[]
+}
+
+model Amenity {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  icon      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  spaces SpaceAmenity[]
+}
+
+model SpaceAmenity {
+  id        String   @id @default(uuid())
+  spaceId   String
+  amenityId String
+  createdAt DateTime @default(now())
+
+  space   Space   @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  amenity Amenity @relation(fields: [amenityId], references: [id], onDelete: Cascade)
+
+  @@unique([spaceId, amenityId])
+}
+
+model Reservation {
+  id         String            @id @default(uuid())
+  customerId String
+  spaceId    String
+  startTime  DateTime
+  endTime    DateTime
+  totalPrice Float
+  status     ReservationStatus @default(PENDING)
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  customer User  @relation("CustomerReservations", fields: [customerId], references: [id], onDelete: Cascade)
+  space    Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+}
