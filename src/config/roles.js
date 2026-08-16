@@ -1,7 +1,16 @@
 const allRoles = {
-  CUSTOMER: ['getSpaces', 'manageReservations'],
-  VENDOR: ['getSpaces', 'manageSpaces', 'manageReservations'],
-  ADMIN: ['getSpaces', 'manageSpaces', 'approveSpaces', 'manageReservations', 'manageUsers', 'manageAmenities'],
+  CUSTOMER: ['getSpaces', 'createReservation', 'getReservations', 'manageReservations'],
+  VENDOR: ['getSpaces', 'manageSpaces', 'getReservations', 'manageReservations'],
+  ADMIN: [
+    'getSpaces',
+    'manageSpaces',
+    'approveSpaces',
+    'createReservation',
+    'getReservations',
+    'manageReservations',
+    'manageUsers',
+    'manageAmenities',
+  ],
 };
 
 const roles = Object.keys(allRoles);
