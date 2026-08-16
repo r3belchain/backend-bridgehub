@@ -3,7 +3,10 @@ const authRoute = require('./auth.route');
 const userRoute = require('./user.route');
 const docsRoute = require('./docs.route');
 const amenityRoute = require('./amenity.route');
+const spaceRoute = require('./space.route');
+const reservationRoute = require('./reservation.route');
 const config = require('../../config/config');
+
 
 const router = express.Router();
 
@@ -19,6 +22,14 @@ const defaultRoutes = [
   {
     path: '/amenities',
     route: amenityRoute,
+  },
+  {
+    path: '/spaces',
+    route: spaceRoute,
+  },
+  {
+    path: '/reservations', 
+    route: reservationRoute,
   },
 ];
 
