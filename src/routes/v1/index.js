@@ -5,6 +5,7 @@ const docsRoute = require('./docs.route');
 const amenityRoute = require('./amenity.route');
 const spaceRoute = require('./space.route');
 const reservationRoute = require('./reservation.route');
+const dashboardRoute = require('./dashboard.route');
 const config = require('../../config/config');
 
 
@@ -28,8 +29,12 @@ const defaultRoutes = [
     route: spaceRoute,
   },
   {
-    path: '/reservations', 
+    path: '/reservations',
     route: reservationRoute,
+  },
+  {
+    path: '/dashboard',
+    route: dashboardRoute,
   },
 ];
 

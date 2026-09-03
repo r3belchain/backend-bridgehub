@@ -1,7 +1,9 @@
 const allRoles = {
   CUSTOMER: ['getSpaces', 'createReservation', 'getReservations', 'manageReservations'],
-  VENDOR: ['getSpaces', 'manageSpaces', 'getReservations', 'manageReservations'],
+  VENDOR: ['getSpaces', 'manageSpaces', 'getReservations', 'manageReservations', 'manageAmenities'],
   ADMIN: [
+    'getUsers',
+    'manageUsers',
     'getSpaces',
     'manageSpaces',
     'approveSpaces',

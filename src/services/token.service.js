@@ -2,6 +2,9 @@ const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const config = require('../config/config');
 const { tokenTypes } = require('../config/tokens');
+const httpStatus = require('http-status');
+const ApiError = require('../utils/ApiError');
+const userService = require('./user.service');
 
 /**
  * Generate token JWT
@@ -45,7 +48,26 @@ const generateAuthTokens = async (user) => {
   };
 };
 
+/**
+ * Generate reset password token
+ * @param {string} email
+ * @returns {Promise<string>}
+ */
+const generateResetPasswordToken = async (email) => {
+  const user = await userService.getUserByEmail(email);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Tidak ada pengguna dengan email ini');
+  }
+  
+  const expires = moment().add(config.jwt.resetPasswordExpirationMinutes, 'minutes');
+  
+  const resetPasswordToken = generateToken(user.id, expires, tokenTypes.RESET_PASSWORD || 'resetPassword');
+  
+  return resetPasswordToken;
+};
+
 module.exports = {
   generateToken,
   generateAuthTokens,
+  generateResetPasswordToken
 };

@@ -9,6 +9,9 @@ router.post('/register', validate(authValidation.register), authController.regis
 router.post('/login', validate(authValidation.login), authController.login);
 router.post('/logout', validate(authValidation.logout), authController.logout);
 
+router.post('/forgot-password', validate(authValidation.forgotPassword), authController.forgotPassword);
+router.post('/reset-password', validate(authValidation.resetPassword), authController.resetPassword);
+
 module.exports = router;
 
 /**
@@ -120,4 +123,69 @@ module.exports = router;
  *     responses:
  *       "204":
  *         description: No content
+ */
+
+/**
+ * @swagger
+ * /auth/forgot-password:
+ *   post:
+ *     summary: Request password reset email
+ *     description: An email will be sent to the user with a token to reset their password.
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *             example:
+ *               email: vendor@example.com
+ *     responses:
+ *       "204":
+ *         description: No content. Email successfully sent.
+ *       "404":
+ *         description: Not found. User with this email does not exist.
+ */
+
+/**
+ * @swagger
+ * /auth/reset-password:
+ *   post:
+ *     summary: Reset password
+ *     description: Use the token sent to the email to create a new password.
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The reset password token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - password
+ *             properties:
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 minLength: 8
+ *                 description: New password
+ *             example:
+ *               password: newpassword123
+ *     responses:
+ *       "204":
+ *         description: No content. Password successfully updated.
+ *       "401":
+ *         description: Unauthorized. Token is invalid or expired.
  */

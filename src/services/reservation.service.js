@@ -2,7 +2,7 @@ const prisma = require('../../prisma');
 const ApiError = require('../utils/ApiError');
 
 /**
- * Membuat reservasi baru oleh Customer (dengan pencegahan bentrok jadwal)
+ * Membuat reservasi baru oleh Customer 
  */
 const createReservation = async (reservationBody, customerId) => {
   const { spaceId, startTime, endTime } = reservationBody;
@@ -29,7 +29,7 @@ const createReservation = async (reservationBody, customerId) => {
     throw new ApiError(400, 'Space is already booked for the selected time slot');
   }
 
-  // Kalkulasi Durasi Jam dan Total Harga
+
   const durationInHours = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60)));
   const totalPrice = durationInHours * space.pricePerHour;
 
@@ -71,13 +71,13 @@ const queryReservations = async (filter, user) => {
     where.spaceId = filter.spaceId;
   }
 
-  // Filter Data berdasarkan Role
+ 
   if (user.role === 'CUSTOMER') {
     where.customerId = user.id; 
   } else if (user.role === 'VENDOR') {
     where.space = { vendorId: user.id }; 
   }
-  // ADMIN melihat seluruh reservasi tanpa filter kepemilikan
+
 
   return prisma.reservation.findMany({
     where,
@@ -139,7 +139,7 @@ const getReservationById = async (id, user) => {
 const updateReservationStatus = async (id, status, user) => {
   const reservation = await getReservationById(id, user);
 
-  // Hanya Vendor pemilik ruangan atau Admin yang berhak menyetujui/menolak pesanan
+  // vendor pemilik dan admin only yang boleh update status
   if (user.role !== 'ADMIN' && reservation.space.vendorId !== user.id) {
     throw new ApiError(403, 'Forbidden: Only the space owner can update reservation status');
   }

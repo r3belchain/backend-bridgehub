@@ -3,21 +3,19 @@ const ApiError = require('../utils/ApiError');
 const bcrypt = require('bcryptjs');
 
 /**
- * Membikin user baru (Register)
+ *  Register
  * @param {Object} userBody
  * @returns {Promise<User>}
  */
 const createUser = async (userBody) => {
-  // Cek apakah email sudah terdaftar
   const existingUser = await getUserByEmail(userBody.email);
   if (existingUser) {
     throw new ApiError(400, 'Email already taken');
   }
 
-  // Hash password sebelum disimpan
+  // Hash password 
   userBody.password = bcrypt.hashSync(userBody.password, 8);
 
-  // Simpan ke database
   return prisma.user.create({
     data: userBody,
   });

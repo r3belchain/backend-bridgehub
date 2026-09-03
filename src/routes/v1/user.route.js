@@ -31,7 +31,7 @@ module.exports = router;
  * /users:
  *   post:
  *     summary: Create a user
- *     description: Only admins can create other users.
+ *     description: Only admins can create other users. Requires 'manageUsers' permission.
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -57,22 +57,17 @@ module.exports = router;
  *                 type: string
  *                 format: password
  *                 minLength: 8
- *                 description: At least one number and one letter
  *               role:
- *                  type: string
- *                  enum: [user, admin]
+ *                 type: string
+ *                 enum: [CUSTOMER, VENDOR, ADMIN]
  *             example:
- *               name: fake name
- *               email: fake@example.com
- *               password: password1
- *               role: user
+ *               name: "Budi Santoso"
+ *               email: "budi@example.com"
+ *               password: "password123"
+ *               role: "VENDOR"
  *     responses:
  *       "201":
  *         description: Created
- *         content:
- *           application/json:
- *             schema:
- *                $ref: '#/components/schemas/User'
  *       "400":
  *         $ref: '#/components/responses/DuplicateEmail'
  *       "401":
@@ -82,7 +77,7 @@ module.exports = router;
  *
  *   get:
  *     summary: Get all users
- *     description: Only admins can retrieve all users.
+ *     description: Only admins can retrieve all users. Requires 'getUsers' permission.
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -96,7 +91,7 @@ module.exports = router;
  *         name: role
  *         schema:
  *           type: string
- *         description: User role
+ *         description: User role (e.g., ADMIN, VENDOR, CUSTOMER)
  *       - in: query
  *         name: sortBy
  *         schema:
@@ -119,27 +114,6 @@ module.exports = router;
  *     responses:
  *       "200":
  *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 results:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/User'
- *                 page:
- *                   type: integer
- *                   example: 1
- *                 limit:
- *                   type: integer
- *                   example: 10
- *                 totalPages:
- *                   type: integer
- *                   example: 1
- *                 totalResults:
- *                   type: integer
- *                   example: 1
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -148,16 +122,16 @@ module.exports = router;
 
 /**
  * @swagger
- * /users/{id}:
+ * /users/{userId}:
  *   get:
  *     summary: Get a user
- *     description: Logged in users can fetch only their own user information. Only admins can fetch other users.
+ *     description: Logged in users can fetch only their own user information. Only admins can fetch other users. Requires 'getUsers' permission.
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: userId
  *         required: true
  *         schema:
  *           type: string
@@ -165,10 +139,6 @@ module.exports = router;
  *     responses:
  *       "200":
  *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *                $ref: '#/components/schemas/User'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -178,13 +148,13 @@ module.exports = router;
  *
  *   patch:
  *     summary: Update a user
- *     description: Logged in users can only update their own information. Only admins can update other users.
+ *     description: Logged in users can only update their own information. Only admins can update other users. Requires 'manageUsers' permission.
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: userId
  *         required: true
  *         schema:
  *           type: string
@@ -206,18 +176,12 @@ module.exports = router;
  *                 type: string
  *                 format: password
  *                 minLength: 8
- *                 description: At least one number and one letter
  *             example:
- *               name: fake name
- *               email: fake@example.com
- *               password: password1
+ *               name: "Budi Update"
+ *               email: "budi.update@example.com"
  *     responses:
  *       "200":
  *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *                $ref: '#/components/schemas/User'
  *       "400":
  *         $ref: '#/components/responses/DuplicateEmail'
  *       "401":
@@ -229,19 +193,19 @@ module.exports = router;
  *
  *   delete:
  *     summary: Delete a user
- *     description: Logged in users can delete only themselves. Only admins can delete other users.
+ *     description: Logged in users can delete only themselves. Only admins can delete other users. Requires 'manageUsers' permission.
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: userId
  *         required: true
  *         schema:
  *           type: string
  *         description: User id
  *     responses:
- *       "200":
+ *       "204":
  *         description: No content
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'

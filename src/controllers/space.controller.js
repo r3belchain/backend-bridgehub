@@ -2,7 +2,6 @@ const catchAsync = require('../utils/catchAsync');
 const spaceService = require('../services/space.service');
 
 const createSpace = catchAsync(async (req, res) => {
-  // Pass req.user.id sebagai vendorId pembuat ruangan
   const space = await spaceService.createSpace(req.body, req.user.id);
   res.status(201).send(space);
 });
@@ -18,7 +17,6 @@ const getSpace = catchAsync(async (req, res) => {
 });
 
 const updateSpace = catchAsync(async (req, res) => {
-  // Pass req.user ke service untuk pengecekan hak kepemilikan ruangan
   const space = await spaceService.updateSpaceById(req.params.spaceId, req.body, req.user);
   res.status(200).send(space);
 });

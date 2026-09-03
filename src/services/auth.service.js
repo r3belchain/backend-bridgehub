@@ -2,6 +2,8 @@ const httpStatus = require('http-status');
 const bcrypt = require('bcryptjs');
 const userService = require('./user.service');
 const ApiError = require('../utils/ApiError');
+const jwt = require('jsonwebtoken');
+const config = require('../config/config');
 
 /**
  * Login dengan email dan password
@@ -21,6 +23,28 @@ const loginUserWithEmailAndPassword = async (email, password) => {
 };
 
 /**
+ * Reset password
+ * @param {string} resetPasswordToken
+ * @param {string} newPassword
+ * @returns {Promise}
+ */
+const resetPassword = async (resetPasswordToken, newPassword) => {
+  try {
+    const payload = jwt.verify(resetPasswordToken, config.jwt.secret);
+    const userId = payload.sub; 
+
+    const user = await userService.getUserById(userId);
+    if (!user) {
+      throw new Error();
+    }
+
+    await userService.updateUserById(userId, { password: newPassword });
+  } catch (error) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Token reset password tidak valid atau sudah kedaluwarsa');
+  }
+};
+
+/**
  * Logout (Stateless JWT)
  */
 const logout = async (refreshToken) => {
@@ -31,4 +55,5 @@ const logout = async (refreshToken) => {
 module.exports = {
   loginUserWithEmailAndPassword,
   logout,
+  resetPassword,
 };

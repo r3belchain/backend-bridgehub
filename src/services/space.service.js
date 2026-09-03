@@ -2,12 +2,12 @@ const prisma = require('../../prisma');
 const ApiError = require('../utils/ApiError');
 
 /**
- * Membuat ruangan baru (Terkunci pada VendorId pembuat)
+ * Membuat ruangan baru 
  */
 const createSpace = async (spaceBody, vendorId) => {
   const { amenityIds, ...spaceData } = spaceBody;
 
-  // Validasi apakah seluruh amenityIds benar-benar ada di DB
+
   if (amenityIds && amenityIds.length > 0) {
     const count = await prisma.amenity.count({
       where: { id: { in: amenityIds } },
@@ -17,7 +17,7 @@ const createSpace = async (spaceBody, vendorId) => {
     }
   }
 
-  // Simpan data ruangan ke DB
+
   return prisma.space.create({
     data: {
       ...spaceData,
@@ -39,7 +39,7 @@ const createSpace = async (spaceBody, vendorId) => {
 };
 
 /**
- * Mengambil semua ruangan (Publik dengan filter)
+ * Mengambil semua ruangan with filter
  */
 const querySpaces = async (filter = {}) => {
   const where = {};
@@ -89,7 +89,7 @@ const getSpaceById = async (id) => {
 };
 
 /**
- * Mengubah ruangan (Dengan isolasi data kepemilikan Vendor)
+ * Mengubah ruangan isolasi data kepemilikan Vendor
  */
 const updateSpaceById = async (spaceId, updateBody, user) => {
   const space = await getSpaceById(spaceId);
@@ -100,7 +100,7 @@ const updateSpaceById = async (spaceId, updateBody, user) => {
 
   const { amenityIds, ...spaceData } = updateBody;
 
-  // Validasi amenityIds jika ada di request update
+
   if (amenityIds) {
     if (amenityIds.length > 0) {
       const count = await prisma.amenity.count({
@@ -136,7 +136,7 @@ const updateSpaceById = async (spaceId, updateBody, user) => {
 };
 
 /**
- * Menghapus ruangan (Dengan isolasi data kepemilikan Vendor)
+ * Menghapus ruangan isolasi data kepemilikan Vendor
  */
 const deleteSpaceById = async (spaceId, user) => {
   const space = await getSpaceById(spaceId);
