@@ -8,7 +8,6 @@ const reservationRoute = require('./reservation.route');
 const dashboardRoute = require('./dashboard.route');
 const config = require('../../config/config');
 
-
 const router = express.Router();
 
 const defaultRoutes = [
